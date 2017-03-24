@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  text: MyString
+  pointsize: 1
+  xpos: 1
+  ypos: 1
+  expanding_brain: one
+
+two:
+  text: MyString
+  pointsize: 1
+  xpos: 1
+  ypos: 1
+  expanding_brain: two

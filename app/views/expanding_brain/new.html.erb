@@ -1,0 +1,30 @@
+<%= form_for :expanding_brain, url: expanding_brain_create_path do |f| %>
+  <!-- <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </p> -->
+
+  <p>
+    <%= f.label :brain_1 %><br>
+    <%= f.text_area :brain_1 %>
+  </p>
+
+  <p>
+    <%= f.label :brain_2 %><br>
+    <%= f.text_area :brain_2 %>
+  </p>
+
+  <p>
+    <%= f.label :brain_3 %><br>
+    <%= f.text_area :brain_3 %>
+  </p>
+
+  <p>
+    <%= f.label :brain_4 %><br>
+    <%= f.text_area :brain_4 %>
+  </p>
+
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>

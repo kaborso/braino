@@ -1,0 +1,6 @@
+INSERT INTO "schema_migrations" (version) VALUES
+('20170321223651'),
+('20170321223730'),
+('20170321224256');
+
+
