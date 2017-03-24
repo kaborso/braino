@@ -17,4 +17,5 @@ test:
   database: expanding_brain_test
 
 production:
+  adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
