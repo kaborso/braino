@@ -17,5 +17,4 @@ test:
   database: expanding_brain_test
 
 production:
-  <<: *default
-  database: expanding_brain_prod
+  url: <%= ENV['DATABASE_URL'] %>
