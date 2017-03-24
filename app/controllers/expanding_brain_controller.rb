@@ -1,5 +1,3 @@
-# require 'bunny'
-
 class ExpandingBrainController < ApplicationController
   def index
   end
