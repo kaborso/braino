@@ -38,7 +38,6 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    amq-protocol (2.1.0)
     arel (7.1.4)
     aws-sdk (2.8.9)
       aws-sdk-resources (= 2.8.9)
@@ -49,8 +48,6 @@ GEM
       aws-sdk-core (= 2.8.9)
     aws-sigv4 (1.0.0)
     builder (3.2.3)
-    bunny (2.6.4)
-      amq-protocol (>= 2.0.1)
     coffee-rails (4.2.1)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.2.x)
@@ -157,7 +154,6 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk (= 2.8.9)
-  bunny (= 2.6.4)
   byebug
   coffee-rails (~> 4.2)
   jbuilder (~> 2.5)
