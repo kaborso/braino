@@ -35,7 +35,7 @@ class ExpandingBrain < ApplicationRecord
         img = MiniMagick::Tool::Convert.new do |convert|
           convert << "lib/assets/brain_meme.jpg"
 
-          convert.merge! ["-font", "Impact"]
+          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
           convert.merge! ["-pointsize", "32"]
 
           convert.merge! ["-size", "285x410"]
