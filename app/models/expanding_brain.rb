@@ -2,6 +2,7 @@ require 'securerandom'
 require 'json'
 require "shellwords"
 require 'aws-sdk'
+require 'mini_magick'
 
 class ExpandingBrain < ApplicationRecord
   has_many :brains
@@ -26,32 +27,33 @@ class ExpandingBrain < ApplicationRecord
 
     Dir.mktmpdir do |tmpdir|
       path = ""
-      cmd = ""
-      res = nil
+
       begin
         path = "#{tmpdir}/#{name}.png"
         logger.debug "Running ImageMagick on #{path}"
-        logger.debug "Where is this"
-        cmd = "convert lib/assets/brain_meme.jpg -font Impact -pointsize 36" \
-              << "-size 285x410 -annotate +2+40 '#{@first}'" \
-              << " -size 285x410 -annotate +2+340 '#{@second}'" \
-              << "-size 285x410 -annotate +2+650 '#{@third}'" \
-              << "-size 285x410 -annotate +2+930 '#{@fourth}'" \
-              << " #{path}"
-        puts cmd
-        logger.debug cmd
-        res = `convert lib/assets/brain_meme.jpg -font Impact -pointsize 36 \
-            -size 285x410 -annotate +2+40 "#{@first.to_s.shellescape}" \
-            -size 285x410 -annotate +2+340 "#{@second.to_s.shellescape}" \
-            -size 285x410 -annotate +2+650 "#{@third.to_s.shellescape}" \
-            -size 285x410 -annotate +2+930 "#{@fourth.to_s.shellescape}" \
-             #{path}`
+
+        img = MiniMagick::Tool::Convert.new do |convert|
+          convert << "lib/assets/brain_meme.jpg"
+
+          convert.merge! ["-font", "Impact"]
+          convert.merge! ["-pointsize", "32"]
+
+          convert.merge! ["-size", "285x410"]
+          convert.merge! ["-annotate", "+2+40", @first.to_s]
+
+          convert.merge! ["-size", "285x410"]
+          convert.merge! ["-annotate", "+2+340", @second.to_s]
+
+          convert.merge! ["-size", "285x410"]
+          convert.merge! ["-annotate", "+2+650", @third.to_s]
+
+          convert.merge! ["-size", "285x410"]
+          convert.merge! ["-annotate", "+2+930", @fourth.to_s]
+
+          convert << "#{path}"
+        end
       rescue StandardError => e
         logger.debug e.inspect
-        # logger.debug e.backtrace[0]
-
-        logger.debug "Failed (#{cmd})"
-        logger.debug "Failed (#{res})"
 
         # requeue
       end
