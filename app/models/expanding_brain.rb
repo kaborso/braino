@@ -31,26 +31,52 @@ class ExpandingBrain < ApplicationRecord
       begin
         path = "#{tmpdir}/#{name}.png"
         logger.debug "Running ImageMagick on #{path}"
-
-        img = MiniMagick::Tool::Convert.new do |convert|
+        img1 = MiniMagick::Tool::Convert.new do |convert|
           convert << "lib/assets/brain_meme.jpg"
-
           convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
           convert.merge! ["-pointsize", "32"]
+          convert.merge! ["-size", "410x295"]
+          convert.merge! ["-gravity", "center"]
+          convert.merge! ["-page", "+2+0"]
+          convert.merge! ["caption:#{@first}"]
+          convert.merge! ["-flatten"]
+          convert.merge! ["#{path}1"]
+        end
 
-          convert.merge! ["-size", "285x410"]
-          convert.merge! ["-annotate", "+2+40", @first.to_s]
+        img2 = MiniMagick::Tool::Convert.new do |convert|
+          convert << "#{path}1"
+          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
+          convert.merge! ["-pointsize", "32"]
+          convert.merge! ["-size", "410x295"]
+          convert.merge! ["-gravity", "center"]
+          convert.merge! ["-page", "+2+305"]
+          convert.merge! ["caption:#{@second}"]
+          convert.merge! ["-flatten"]
+          convert.merge! ["#{path}2"]
+        end
 
-          convert.merge! ["-size", "285x410"]
-          convert.merge! ["-annotate", "+2+340", @second.to_s]
+        img3 = MiniMagick::Tool::Convert.new do |convert|
+          convert << "#{path}2"
+          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
+          convert.merge! ["-pointsize", "32"]
+          convert.merge! ["-size", "410x270"]
+          convert.merge! ["-gravity", "center"]
+          convert.merge! ["-page", "+2+610"]
+          convert.merge! ["caption:#{@third}"]
+          convert.merge! ["-flatten"]
+          convert.merge! ["#{path}3"]
+        end
 
-          convert.merge! ["-size", "285x410"]
-          convert.merge! ["-annotate", "+2+650", @third.to_s]
-
-          convert.merge! ["-size", "285x410"]
-          convert.merge! ["-annotate", "+2+930", @fourth.to_s]
-
-          convert << "#{path}"
+        img4 = MiniMagick::Tool::Convert.new do |convert|
+          convert << "#{path}3"
+          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
+          convert.merge! ["-pointsize", "32"]
+          convert.merge! ["-size", "410x300"]
+          convert.merge! ["-gravity", "center"]
+          convert.merge! ["-page", "+2+895"]
+          convert.merge! ["caption:#{@fourth}"]
+          convert.merge! ["-flatten"]
+          convert.merge! ["#{path}"]
         end
       rescue StandardError => e
         logger.debug e.inspect
