@@ -88,19 +88,18 @@ class ExpandingBrain < ApplicationRecord
         logger.debug "Successfully processed #{path}"
 
         begin
-          # post to s3
-
-          logger.debug "Putting #{path} on S3"
-
+          # Put image on S3
+          key_name = "#{name}.png"
           s3 = Aws::S3::Client.new(region: 'us-east-2')
           File.open(path, 'rb') do |file|
-            s3.put_object(bucket: 'expanding-brain', key: name, body: file)
+            s3.put_object(bucket: 'expanding-brain', key: key_name, body: file)
           end
 
-          signer = Aws::S3::Presigner.new(client: s3)
-          @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: name)
-          logger.debug "Image is ready at #{@url}"
+          logger.debug "Placed #{path} on S3"
 
+          # Get a public url for the image
+          signer = Aws::S3::Presigner.new(client: s3)
+          @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: key_name)
         rescue StandardError => e
           logger.debug e.inspect
           # logger.debug e.backtrace

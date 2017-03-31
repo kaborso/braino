@@ -1,14 +1,11 @@
 Rails.application.routes.draw do
   root to: 'expanding_brain#new'
+
   get 'expanding_brain/new'
 
   post 'expanding_brain/create'
 
-  get 'expanding_brain/show'
+  get 'expanding_brain/show/', to: redirect('/')
 
-  get 'brain/new'
-
-  get 'brain/create'
-
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get 'expanding_brain/show/:id', to: 'expanding_brain#show'
 end
