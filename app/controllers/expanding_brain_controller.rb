@@ -1,10 +1,14 @@
 require 'aws-sdk'
+require 'socket'
 
 class ExpandingBrainController < ApplicationController
   def index
   end
 
   def new
+    conn = TCPSocket.new 'a49e7bd5.carbon.hostedgraphite.com', 2003
+    conn.puts "5afc0669-ed8f-49f2-8ada-4bf7bac69c57.#{ENV['RAILS_ENV']}.visit 1 #{Time.now.to_i}\n"
+    conn.close
   end
 
   def create

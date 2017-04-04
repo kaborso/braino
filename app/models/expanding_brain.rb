@@ -3,6 +3,7 @@ require 'json'
 require "shellwords"
 require 'aws-sdk'
 require 'mini_magick'
+require 'socket'
 
 class ExpandingBrain < ApplicationRecord
   has_many :brains
@@ -15,6 +16,9 @@ class ExpandingBrain < ApplicationRecord
     @second = Brain.new(second)
     @third = Brain.new(third)
     @fourth =  Brain.new(fourth)
+    @init_time = Time.now.to_i
+    @generate_time = 0
+    @upload_time = 0
   end
 
   def self.perform
@@ -80,12 +84,17 @@ class ExpandingBrain < ApplicationRecord
         end
       rescue StandardError => e
         logger.debug e.inspect
+        track("error", 1)
 
         # requeue
       end
 
       if File.exist?(path)
+
+
         logger.debug "Successfully processed #{path}"
+        @generate_time = Time.now.to_i
+        track("image.generate.timer", @generate_time - @init_time)
 
         begin
           # Put image on S3
@@ -96,12 +105,17 @@ class ExpandingBrain < ApplicationRecord
           end
 
           logger.debug "Placed #{path} on S3"
+          @upload_time = Time.now.to_i
+          track("image.upload.timer", @upload_time - @generate_time)
+
 
           # Get a public url for the image
           signer = Aws::S3::Presigner.new(client: s3)
           @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: key_name)
         rescue StandardError => e
           logger.debug e.inspect
+          track("error", 1)
+
           # logger.debug e.backtrace
         end
       else
@@ -109,5 +123,12 @@ class ExpandingBrain < ApplicationRecord
       end
     end
     self
+  end
+  private
+  def track(metric, value)
+    logger.debug "#{metric}: #{value}"
+    conn = TCPSocket.new 'a49e7bd5.carbon.hostedgraphite.com', 2003
+    conn.puts "5afc0669-ed8f-49f2-8ada-4bf7bac69c57.#{ENV['RAILS_ENV']}.#{metric} #{value} #{Time.now.to_i}\n"
+    conn.close
   end
 end
