@@ -10,7 +10,10 @@ class ExpandingBrain < ApplicationRecord
   attr_reader :name, :url, :first, :second, :third, :fourth
   attr_reader
 
-  def initialize(first, second, third, fourth)
+  def initialize(*arr)
+    first, second, third, fourth = arr
+    # TODO: pass in brains hash and then extract
+    # first, second, third, fourth = brains.values_at(:brain_1, :brain_2, :brain_3, :brain_4)
     @name = SecureRandom.urlsafe_base64(9)
     @first = Brain.new(first)
     @second = Brain.new(second)
@@ -126,9 +129,11 @@ class ExpandingBrain < ApplicationRecord
   end
   private
   def track(metric, value)
-    logger.debug "#{metric}: #{value}"
-    conn = TCPSocket.new 'a49e7bd5.carbon.hostedgraphite.com', 2003
-    conn.puts "5afc0669-ed8f-49f2-8ada-4bf7bac69c57.#{ENV['RAILS_ENV']}.#{metric} #{value} #{Time.now.to_i}\n"
-    conn.close
+    if ENV['RAILS_ENV'] != "test"
+      logger.debug "#{metric}: #{value}"
+      conn = TCPSocket.new 'a49e7bd5.carbon.hostedgraphite.com', 2003
+      conn.puts "5afc0669-ed8f-49f2-8ada-4bf7bac69c57.#{ENV['RAILS_ENV']}.#{metric} #{value} #{Time.now.to_i}\n"
+      conn.close
+    end
   end
 end

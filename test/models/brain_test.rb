@@ -4,14 +4,14 @@ class BrainTest < ActiveSupport::TestCase
 
   test "splits up long text with carriage returns every 30 characters" do
     loooooong_text = "Here's some text with a looooooooooooong word in the first thirty characters."
-    multiline_text = "Here's some text with a\rlooooooooooooong word in the\rfirst thirty characters."
+    multiline_text = "Here's some text with a\nlooooooooooooong word in the\nfirst thirty characters."
 
     assert_equal "#{Brain.new(loooooong_text)}", multiline_text
   end
 
   test "splits up long, spaceless text with carriage returns every 30 characters" do
     loooooong_text = "Here'ssometextwithoutanyspacesjusttomakesurethisstillworks."
-    multiline_text = "Here'ssometextwithoutanyspaces\rjusttomakesurethisstillworks."
+    multiline_text = "Here'ssometextwithoutanyspaces\njusttomakesurethisstillworks."
 
     assert_equal "#{Brain.new(loooooong_text)}", multiline_text
   end
@@ -23,5 +23,9 @@ class BrainTest < ActiveSupport::TestCase
                 <<  "Impact font. The max is 6 lines of 30 characters each: 180 " \
                 <<  "maximum. Don't worry, we will soon support even more sizes."
     assert_equal right_length, "#{Brain.new(lots_of_text)}".length
+  end
+
+  test "handles nil" do
+    assert_equal "", "#{Brain.new(nil)}"
   end
 end

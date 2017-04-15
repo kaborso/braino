@@ -18,7 +18,7 @@ class Brain < ApplicationRecord
 
     set_limits
 
-    @text = process(text)
+    @text = process(text || '')
   end
 
   def to_s
