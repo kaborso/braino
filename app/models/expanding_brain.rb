@@ -10,7 +10,7 @@ class ExpandingBrain < ApplicationRecord
   attr_reader :name, :url, :first, :second, :third, :fourth
   attr_reader
 
-  def initialize(*arr)
+  def initialize(arr)
     first, second, third, fourth = arr
     # TODO: pass in brains hash and then extract
     # first, second, third, fourth = brains.values_at(:brain_1, :brain_2, :brain_3, :brain_4)
