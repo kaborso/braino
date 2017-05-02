@@ -1,1 +1,1 @@
-web: bundle exec rails server
+app: bundle exec puma config.ru

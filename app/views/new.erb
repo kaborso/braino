@@ -1,0 +1,38 @@
+<form action="/expanding_brain/create" accept-charset="UTF-8" method="post">
+  <input name="utf8" type="hidden" value="✓">
+  <input type="hidden" name="authenticity_token" value="+xSvQPsKlqKhuXoIQsACWjOad/BX82uWFsf625tlY6n6K5cAzqGt0FmfxyKow8dQIt5vrnEPiFh877zpYg9rDw==">
+  <!-- <p>
+    <label for="expanding_brain_name">Name</label><br>
+    <input type="text" name="expanding_brain[name]" id="expanding_brain_name" />
+  </p> -->
+
+  <p>
+    <label for="expanding_brain_brain_1">Brain 1</label><br>
+    <textarea name="expanding_brain[brain_1]" id="expanding_brain_brain_1"></textarea>
+  </p>
+
+  <p>
+    <label for="expanding_brain_brain_2">Brain 2</label><br>
+    <textarea name="expanding_brain[brain_2]" id="expanding_brain_brain_2"></textarea>
+  </p>
+
+  <p>
+    <label for="expanding_brain_brain_3">Brain 3</label><br>
+    <textarea name="expanding_brain[brain_3]" id="expanding_brain_brain_3"></textarea>
+  </p>
+
+  <p>
+    <label for="expanding_brain_brain_4">Brain 4</label><br>
+    <textarea name="expanding_brain[brain_4]" id="expanding_brain_brain_4"></textarea>
+  </p>
+
+  <p>
+    <input type="submit" name="commit" value="Generate" data-disable-with="Generate">
+  </p>
+</form>
+<!-- <p>
+  POST: <span class="shell"> $ curl -H "Content-Type: application/json" -d '{"brains":["first","second","third","fourth"]}' -X POST https://braino.herokuapp.com/expanding_brain.json -i</span>
+</p>
+<p>
+  GET: <span class="shell"> $ curl -H "Content-Type: application/json" -d '{"id":"whatever_it_is"}' -X GET https://braino.herokuapp.com/expanding_brain.json -i</span>
+</p> -->

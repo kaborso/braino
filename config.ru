@@ -1,5 +1,14 @@
-# This file is used by Rack-based servers to start the application.
+require 'rubygems'
+require 'bundler'
 
-require_relative 'config/environment'
+ENVIRONMENT = (ENV['RACK_ENV'] || 'development').to_sym
 
-run Rails.application
+Bundler.setup(:default, ENVIRONMENT)
+Bundler.require(:default, ENVIRONMENT)
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), 'app'))
+
+require 'braino'
+
+use Rack::Session::Cookie
+run Rack::Cascade.new [API, Web]
