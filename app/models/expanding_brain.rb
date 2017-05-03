@@ -1,12 +1,6 @@
-require 'securerandom'
-require 'json'
-require "shellwords"
-require 'aws-sdk'
-require 'mini_magick'
-require 'socket'
+class ExpandingBrain
+  include Metrics
 
-class ExpandingBrain < ApplicationRecord
-  has_many :brains
   attr_reader :name, :url, :first, :second, :third, :fourth
   attr_reader
 
@@ -24,8 +18,9 @@ class ExpandingBrain < ApplicationRecord
     @upload_time = 0
   end
 
-  def self.perform
-
+  def self.generate(brains)
+    # ExpandingBrain.new(brains).generate
+    ExpandingBrain.new(brains)
   end
 
   def generate

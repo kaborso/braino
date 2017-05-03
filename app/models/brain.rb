@@ -1,8 +1,4 @@
-require "shellwords"
-
-class Brain < ApplicationRecord
-  belongs_to :expanding_brain
-
+class Brain
   attr_reader :pointsize
   attr_reader :max_line_length
   attr_reader :max_text_length
