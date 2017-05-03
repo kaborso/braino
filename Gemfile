@@ -13,6 +13,7 @@ gem "mini_magick"
 group :test do
   gem 'airborne'
   gem 'rspec'
+  gem 'simplecov', require: false
 end
 group :development do
   gem 'guard-rspec', require: false
