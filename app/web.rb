@@ -5,11 +5,15 @@ class Web < Sinatra::Base
     erb :new, :layout => :application
   end
 
+  post '/' do
+    @url = ExpandingBrain.generate(params[:brains]).url
+    erb :show, :layout => :application
+  end
+
   get '/show/:image_id' do
-    s3 = Aws::S3::Client.new(region: 'us-east-2')
-    signer = Aws::S3::Presigner.new(client: s3)
-    key_name = "#{params[:image_id]}.png"
-    @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: key_name)
+    key_name = "#{params[:id]}.png"
+    @url = Storage.get_image_url(key_name)
+    erb :show, :layout => :application
   end
 
   not_found do
