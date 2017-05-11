@@ -16,7 +16,7 @@ class ExpandingBrain
   end
 
   def self.generate(brains)
-    ExpandingBrain.new(brains).generate
+    ExpandingBrain.new(brains).tap { |_| _.generate }
   end
 
   def generate
@@ -35,8 +35,8 @@ class ExpandingBrain
         fourth.render("#{path}3", path)
 
       rescue StandardError => e
-        raise ExpandingBrainError, "failed to generate image -- #{e.message}"
         track("error", 1)
+        raise ExpandingBrainError, "Failed to generate image -- #{e.message}"
       end
 
       if File.exist?(path)
@@ -53,17 +53,15 @@ class ExpandingBrain
           track("image.upload.timer", @upload_time - @generate_time)
 
           # Get a public url for the image
-          path = Storage.get_image_url(key_name)
-          puts path
+          @url = Storage.get_image_url(key_name)
         rescue StandardError => e
-          raise ExpandingBrainError, "failed to generate image -- #{e.message}"
           track("error", 1)
+          raise ExpandingBrainError, "Failed to finalize image -- #{e.message}"
         end
       else
-        raise ExpandingBrainError, "Could not generate image."
+        raise ExpandingBrainError, "Failed to find generated image -- file does not exist."
       end
     end
-    path
   end
 end
 
