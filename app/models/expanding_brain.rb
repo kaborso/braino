@@ -2,133 +2,69 @@ class ExpandingBrain
   include Metrics
 
   attr_reader :name, :url, :first, :second, :third, :fourth
-  attr_reader
 
-  def initialize(arr)
-    first, second, third, fourth = arr
-    # TODO: pass in brains hash and then extract
-    # first, second, third, fourth = brains.values_at(:brain_1, :brain_2, :brain_3, :brain_4)
+  def initialize(brains)
+    first, second, third, fourth = brains
     @name = SecureRandom.urlsafe_base64(9)
-    @first = Brain.new(first)
-    @second = Brain.new(second)
-    @third = Brain.new(third)
-    @fourth =  Brain.new(fourth)
+    @first = Brain.new(first, pane:"410x295", page:"+2+0")
+    @second = Brain.new(second, pane:"410x295", page:"+2+305")
+    @third = Brain.new(third, pane: "410x270", page:"+2+610")
+    @fourth =  Brain.new(fourth, pane: "410x300", page:"+2+895")
     @init_time = Time.now.to_i
     @generate_time = 0
     @upload_time = 0
   end
 
   def self.generate(brains)
-    # ExpandingBrain.new(brains).generate
-    ExpandingBrain.new(brains)
+    ExpandingBrain.new(brains).generate
   end
 
   def generate
-    logger.debug Dir.pwd
-    logger.debug "#{File.exists?('lib/assets/brain_meme.jpg')}"
+    path = ""
 
     Dir.mktmpdir do |tmpdir|
-      path = ""
 
       begin
+        base_path = "lib/assets/brain_meme.jpg"
         path = "#{tmpdir}/#{name}.png"
-        logger.debug "Running ImageMagick on #{path}"
-        img1 = MiniMagick::Tool::Convert.new do |convert|
-          convert << "lib/assets/brain_meme.jpg"
-          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
-          convert.merge! ["-pointsize", "32"]
-          convert.merge! ["-size", "410x295"]
-          convert.merge! ["-gravity", "center"]
-          convert.merge! ["-page", "+2+0"]
-          convert.merge! ["caption:#{@first}"]
-          convert.merge! ["-flatten"]
-          convert.merge! ["#{path}1"]
-        end
+        # logger.debug "Running ImageMagick on #{path}"
 
-        img2 = MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{path}1"
-          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
-          convert.merge! ["-pointsize", "32"]
-          convert.merge! ["-size", "410x295"]
-          convert.merge! ["-gravity", "center"]
-          convert.merge! ["-page", "+2+305"]
-          convert.merge! ["caption:#{@second}"]
-          convert.merge! ["-flatten"]
-          convert.merge! ["#{path}2"]
-        end
+        first.render(base_path, "#{path}1", )
+        second.render("#{path}1", "#{path}2")
+        third.render("#{path}2", "#{path}3")
+        fourth.render("#{path}3", path)
 
-        img3 = MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{path}2"
-          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
-          convert.merge! ["-pointsize", "32"]
-          convert.merge! ["-size", "410x270"]
-          convert.merge! ["-gravity", "center"]
-          convert.merge! ["-page", "+2+610"]
-          convert.merge! ["caption:#{@third}"]
-          convert.merge! ["-flatten"]
-          convert.merge! ["#{path}3"]
-        end
-
-        img4 = MiniMagick::Tool::Convert.new do |convert|
-          convert << "#{path}3"
-          convert.merge! ["-font", "#{::Rails.root}/public/fonts/Impact.ttf"]
-          convert.merge! ["-pointsize", "32"]
-          convert.merge! ["-size", "410x300"]
-          convert.merge! ["-gravity", "center"]
-          convert.merge! ["-page", "+2+895"]
-          convert.merge! ["caption:#{@fourth}"]
-          convert.merge! ["-flatten"]
-          convert.merge! ["#{path}"]
-        end
       rescue StandardError => e
-        logger.debug e.inspect
+        raise ExpandingBrainError, "failed to generate image -- #{e.message}"
         track("error", 1)
-
-        # requeue
       end
 
       if File.exist?(path)
-
-
-        logger.debug "Successfully processed #{path}"
+        # logger.debug "Successfully processed #{path}"
         @generate_time = Time.now.to_i
         track("image.generate.timer", @generate_time - @init_time)
 
         begin
           # Put image on S3
-          key_name = "#{name}.png"
-          s3 = Aws::S3::Client.new(region: 'us-east-2')
-          File.open(path, 'rb') do |file|
-            s3.put_object(bucket: 'expanding-brain', key: key_name, body: file)
-          end
+          key_name = Storage.upload_image(name, path)
 
-          logger.debug "Placed #{path} on S3"
+          # logger.debug "Placed #{path} on S3"
           @upload_time = Time.now.to_i
           track("image.upload.timer", @upload_time - @generate_time)
 
-
           # Get a public url for the image
-          signer = Aws::S3::Presigner.new(client: s3)
-          @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: key_name)
+          path = Storage.get_image_url(key_name)
+          puts path
         rescue StandardError => e
-          logger.debug e.inspect
+          raise ExpandingBrainError, "failed to generate image -- #{e.message}"
           track("error", 1)
-
-          # logger.debug e.backtrace
         end
       else
-        logger.debug "Could not generate image."
+        raise ExpandingBrainError, "Could not generate image."
       end
     end
-    self
-  end
-  private
-  def track(metric, value)
-    if ENV['RAILS_ENV'] != "test"
-      logger.debug "#{metric}: #{value}"
-      conn = TCPSocket.new 'a49e7bd5.carbon.hostedgraphite.com', 2003
-      conn.puts "5afc0669-ed8f-49f2-8ada-4bf7bac69c57.#{ENV['RAILS_ENV']}.#{metric} #{value} #{Time.now.to_i}\n"
-      conn.close
-    end
+    path
   end
 end
+
+class ExpandingBrainError < StandardError; end

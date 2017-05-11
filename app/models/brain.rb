@@ -1,5 +1,10 @@
 class Brain
+  include Metrics
+
   attr_reader :pointsize
+  attr_reader :pane
+  attr_reader :page
+  attr_reader :text
   attr_reader :max_line_length
   attr_reader :max_text_length
 
@@ -9,8 +14,22 @@ class Brain
   SMALLER_POINTSIZE = 24
   TINIEST_POINTSIZE = 12
 
-  def initialize(text, pointsize: DEFAULT_POINTSIZE)
+  # Pane sizes
+  # "410x295"
+  # "410x295"
+  # "410x270"
+  # "410x300"
+
+  # Pane positions
+  # +2+0
+  # +2+305
+  # +2+610
+  # +2+895
+
+  def initialize(text, pointsize: DEFAULT_POINTSIZE, pane: "", page: "")
     @pointsize = pointsize
+    @pane = pane
+    @page = page
 
     set_limits
 
@@ -19,6 +38,26 @@ class Brain
 
   def to_s
     @text
+  end
+
+  def render(input, output)
+    begin
+      MiniMagick::Tool::Convert.new do |convert|
+        convert << input
+        convert.merge! ["-font", "lib/assets/Impact.ttf"]
+        convert.merge! ["-pointsize", pointsize]
+        convert.merge! ["-size", pane]
+        convert.merge! ["-gravity", "center"]
+        convert.merge! ["-page", page]
+        convert.merge! ["caption:#{text}"]
+        convert.merge! ["-flatten"]
+        convert.merge! [output]
+      end
+      return output
+    rescue StandardError => e
+      track("error", 1)
+      raise BrainError, "failed to render brain image (#{output}) -- #{e.message}"
+    end
   end
 
   private
@@ -63,4 +102,7 @@ class Brain
       @max_text_length = 180
     end
   end
+
 end
+
+class BrainError < StandardError; end
