@@ -17,4 +17,5 @@ group :test do
 end
 group :development do
   gem 'guard-rspec', require: false
+  gem 'rake', require: false
 end
