@@ -1,24 +1,54 @@
-# README
+## Development
+1. do `bundle install`
+2. run tests with `rake`
+3. boot app via `foreman start`
+4. visit `localhost:9292`
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## API
 
-Things you may want to cover:
+(mainly for bots and stuff)
 
-* Ruby version
+**GET /expanding_brain(.json)**
+*(Retrieve the url for a generated expanding brain image)*
 
-* System dependencies
+Request
+- **id** *String* (required)
 
-* Configuration
+```shell
+$ curl -H "Content-Type: application/json" \
+-X GET localhost:9292/expanding_brain.json?id=something -i
+```
 
-* Database creation
+Response
+- **url**
 
-* Database initialization
+```json
+{
+  "url":"https://..."
+}
+```
 
-* How to run the test suite
+**POST /expanding_brain(.json)**
+*(Generate an expanding brain image)*
 
-* Services (job queues, cache servers, search engines, etc.)
+Request
+- **brains** *Array* (required)
+  - ***** *Hash* (at least one is required)
+    - **text** *String* (required)
+    - **_** _ (there will be more options eventually)
 
-* Deployment instructions
+```shell
+$ curl -H "Content-Type: application/json" \
+       -d '{"brains":[{"text":"a"},{"text":"b"},{"text":"c"},{"text":"d"}]}' \
+       -X POST localhost:9292/expanding_brain.json -i
+```
 
-* ...
+Response
+- **name** *String*
+- **url** *String*
+
+```json
+{
+  "name":"identifier",
+  "url":"https://..."
+}```
