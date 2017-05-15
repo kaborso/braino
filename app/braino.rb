@@ -3,6 +3,13 @@ if !ENV['AWS_ACCESS_KEY_ID'] || !ENV['AWS_SECRET_ACCESS_KEY']
   exit
 end
 
+require 'rubygems'
+require 'bundler'
+ENVIRONMENT = (ENV['RACK_ENV'] || 'development').to_sym
+
+Bundler.setup(:default, ENVIRONMENT)
+Bundler.require(:default, ENVIRONMENT)
+
 require 'securerandom'
 require 'json'
 require "shellwords"
@@ -19,7 +26,6 @@ require 'storage'
 class API < Grape::API
   extend Metrics
   extend Storage
-
 end
 
 require 'models/brain'

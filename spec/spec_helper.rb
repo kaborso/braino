@@ -3,15 +3,10 @@ SimpleCov.start
 
 ENV['RACK_ENV'] = 'test'
 
-require 'rubygems'
-require 'bundler'
-Bundler.setup(:default, ENV['RACK_ENV'])
-Bundler.require(:default, ENV['RACK_ENV'])
-
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../app'))
+require 'braino'
 require 'rack/test'
 require 'webmock/rspec'
-require 'braino'
 
 Airborne.configure do |config|
   config.rack_app = API
