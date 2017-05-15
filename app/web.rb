@@ -15,14 +15,18 @@ class Web < Sinatra::Base
     end
   end
 
-  get '/show/:image_id' do
+  get '/show/:image_id?' do
     begin
-      key_name = "#{params[:id]}.png"
+      raise ArgumentError unless params[:image_id]
+      key_name = "#{params[:image_id]}.png"
       @url = Storage.get_image_url(key_name)
       erb :show, :layout => :application
+    rescue ArgumentError => e
+      logger.error e.message
+      [400, 'Missing image ID parameter']
     rescue => e
       logger.error e.message
-      'Could not retrieve image.'
+      [404]
     end
   end
 
