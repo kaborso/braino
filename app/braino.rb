@@ -1,3 +1,8 @@
+if !ENV['AWS_ACCESS_KEY_ID'] || !ENV['AWS_SECRET_ACCESS_KEY']
+  puts 'Missing aws credentials!'
+  exit
+end
+
 require 'securerandom'
 require 'json'
 require "shellwords"
