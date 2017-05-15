@@ -10,6 +10,7 @@ Bundler.require(:default, ENV['RACK_ENV'])
 
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../app'))
 require 'rack/test'
+require 'webmock/rspec'
 require 'braino'
 
 Airborne.configure do |config|
@@ -28,4 +29,9 @@ RSpec.configure do |config|
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
+end
+
+VCR.configure do |config|
+  config.cassette_library_dir = "fixtures/vcr_cassettes"
+  config.hook_into :webmock
 end

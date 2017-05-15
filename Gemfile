@@ -14,6 +14,8 @@ group :test do
   gem 'airborne'
   gem 'rspec'
   gem 'simplecov', require: false
+  gem 'vcr'
+  gem 'webmock'
 end
 group :development do
   gem 'guard-rspec', require: false
