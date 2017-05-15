@@ -15,8 +15,12 @@ module Storage
   def self.get_image_url(key_name)
     begin
       s3 = Aws::S3::Client.new(region: 'us-east-2')
-      signer = Aws::S3::Presigner.new(client: s3)
-      @url = signer.presigned_url(:get_object, bucket: "expanding-brain", key: key_name)
+      obj = Aws::S3::Object.new(client: s3, bucket_name: "expanding-brain", key: key_name)
+      if obj.exists?
+        return obj.presigned_url(:get)
+      else
+        raise StorageError, "Image does not exist"
+      end
     rescue => e
       raise StorageError, "Could not get image url -- #{e.message}"
     end
