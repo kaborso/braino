@@ -19,9 +19,9 @@ class API < Grape::API
   end
   get '/expanding_brain' do
     begin
-      url = Storage.get_image_url('blah')
-      { url: url }
-
+      {
+        url: Storage.get_image_url(params[:id])
+      }
     rescue => e
       logger.error e.message
       status 404

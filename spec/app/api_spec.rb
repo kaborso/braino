@@ -1,24 +1,19 @@
 describe 'braino' do
   describe 'get /expanding_brain.json' do
-    before(:each) do
-      aws_response = double('AWS')
-      allow(aws_response).to receive_messages({
-        url: 'https://whatever/something'
-      })
-      allow(Aws::S3::Client).to receive(:new).and_return(aws_response)
-      allow(Storage).to receive(:get_image_url).and_return('http://someawsurl/fortheimageblah')
-    end
-
     it 'validates type' do
-      get '/expanding_brain.json?id=blah'
-      expect_status 200
-      expect_json_types(url: :string)
+      VCR.use_cassette('aws_test_png') do
+        get '/expanding_brain.json?id=test.png'
+        expect_status 200
+        expect_json_types(url: :string)
+      end
     end
 
     it 'returns presigned_url' do
-      get '/expanding_brain.json?id=blah'
-      expect_status 200
-      expect_json(url: 'http://someawsurl/fortheimageblah')
+      VCR.use_cassette('aws_test_png') do
+        get '/expanding_brain.json?id=test.png'
+        expect_status 200
+        expect_json(url: regex("https://expanding-brain.s3.us-east-2.amazonaws.com/test.png"))
+      end
     end
 
     it 'returns error when no "id" param' do
@@ -29,11 +24,12 @@ describe 'braino' do
     end
 
     it 'returns error when no image found for "id" param' do
-      allow(Storage).to receive(:get_image_url).and_raise(StandardError)
-      get '/expanding_brain.json?id=NotOnS3'
-      expect_status 404
-      expect_json_types(error: :string)
-      expect_json(error: "could not get url for NotOnS3")
+      VCR.use_cassette('aws_not_found') do
+        get '/expanding_brain.json?id=DoesNotExist'
+        expect_status 404
+        expect_json_types(error: :string)
+        expect_json(error: "could not get url for DoesNotExist")
+      end
     end
   end
 
