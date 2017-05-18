@@ -63,6 +63,10 @@ class ExpandingBrain
       end
     end
   end
+
+  def to_s
+    "#{@url}"
+  end
 end
 
 class ExpandingBrainError < StandardError; end

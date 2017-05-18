@@ -83,19 +83,27 @@ describe 'expanding brain model' do
   end
 
   describe 'static' do
-    it '#generate returns an instance with a named and uploaded image' do
+    before(:each) do
       allow_any_instance_of(Brain).to receive(:render).and_return("done")
       allow(File).to receive(:exist?).and_return(true)
       allow_any_instance_of(ExpandingBrain).to receive(:track).with("image.generate.timer", instance_of(Fixnum)).and_return(true)
       allow(Storage).to receive(:upload_image).and_return(true)
       allow_any_instance_of(ExpandingBrain).to receive(:track).with("image.upload.timer", instance_of(Fixnum)).and_return(true)
       allow(Storage).to receive(:get_image_url).and_return("https://expanding-brain.s3.us-east-2.amazonaws.com/someimage.png")
+    end
 
-      eb = ExpandingBrain.generate(brains)
+    describe '#generate' do
+      it 'returns an instance with a named and uploaded image' do
+        eb = ExpandingBrain.generate(brains)
 
-      expect(eb).to be_a_kind_of(ExpandingBrain)
-      expect(eb.name).to be_a_kind_of(String)
-      expect(eb.url).to match(/https:\/\/expanding-brain.s3.us-east-2.amazonaws.com/)
+        expect(eb).to be_a_kind_of(ExpandingBrain)
+        expect(eb.name).to be_a_kind_of(String)
+        expect(eb.url).to match(/https:\/\/expanding-brain.s3.us-east-2.amazonaws.com/)
+      end
+
+      it 'works in string interpolation' do
+        expect("#{ExpandingBrain.generate(brains)}").to match(/https:\/\/expanding-brain.s3.us-east-2.amazonaws.com/)
+      end
     end
   end
 end
