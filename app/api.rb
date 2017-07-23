@@ -1,4 +1,5 @@
 class API < Grape::API
+  default_error_status 400
   rescue_from :all
   helpers do
     def logger
