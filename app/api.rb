@@ -37,7 +37,10 @@ class API < Grape::API
     exactly_one_of :brains
   end
   post '/expanding_brain' do
-    braino = ExpandingBrain.generate(params[:brains])
+    brains = params[:brains].map do |brains|
+      brains[:text]
+    end
+    braino = ExpandingBrain.generate(brains)
     {
       name: braino.name,
       url: braino.url
