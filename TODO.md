@@ -11,7 +11,7 @@
 - [ ] Text options
 - [ ] Positioning options
 - [ ] Better UI
-  - [ ] Load generated image next to form
+  - [X] Load generated image next to form
   - [ ] Offer sharing options
 - [ ] Queue
 ### Nice to have
