@@ -28,14 +28,6 @@ describe 'expanding brain site' do
     end
   end
 
-  describe 'post /' do
-    it 'returns 200' do
-      get '/'
-      expect(last_response).to be_ok
-    end
-  end
-
-
   describe '404' do
     it 'returns 404' do
       get '/blah'

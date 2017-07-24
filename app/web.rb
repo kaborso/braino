@@ -5,16 +5,6 @@ class Web < Sinatra::Base
     erb :new, :layout => :application
   end
 
-  post '/' do
-    begin
-      @url = ExpandingBrain.generate(params[:brains])
-      erb :show, :layout => :application
-    rescue => e
-      logger.error e.message
-      'Could not generate image.'
-    end
-  end
-
   get '/show/:image_id?' do
     begin
       raise ArgumentError unless params[:image_id]
