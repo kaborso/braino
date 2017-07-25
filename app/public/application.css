@@ -1,2 +1,40 @@
-#input { float: left; width:150px; }
-#output img { height: 600px; }
+#banner {
+  padding: 10px;
+  background-color: rgba(9, 68, 91, 0.81);
+  color: white;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+}
+#banner h1 {
+  margin: 0 0 0px 0;
+}
+#banner h3 {
+  margin: 0px 0 0 0;
+}
+#input {
+  float: left;
+}
+#input button {
+  display: block;
+  margin: -20px auto 0 auto;
+}
+#input textarea {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  width: 300px;
+  height: 130px;
+  margin-bottom: 15px;
+}
+#output {
+  float: left;
+  width: 480px;
+  padding: 10px;
+}
+#output img {
+  width: 100%;
+}
+#box {
+  width: 600px
+  margin: 0 auto 0 auto;
+}
